@@ -1,7 +1,7 @@
 import { Options, JsonSchema } from "./Types.js";
 import { parseSchema } from "./parsers/parseSchema.js";
 
-export const jsonSchemaToZod = (
+export const jsonSchemaToZodex = (
   schema: JsonSchema,
   { module, name, type, noImport, ...rest }: Options = {},
 ): string => {

@@ -25,8 +25,8 @@ function checkSrcDir(path: string): string[] {
 const lines = checkSrcDir("src");
 
 lines.push(
-  'import { jsonSchemaToZod } from "./jsonSchemaToZod.js"',
-  "export default jsonSchemaToZod",
+  'import { jsonSchemaToZodex } from "./jsonSchemaToZodex.js"',
+  "export default jsonSchemaToZodex",
 );
 
 writeFileSync("./src/index.ts", lines.join("\n"));

@@ -37,5 +37,5 @@ export const parseOneOf = (
       });
     }
   })`
-    : "z.any()";
+    : `{"type": "any"}`;
 };

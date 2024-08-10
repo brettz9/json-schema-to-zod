@@ -28,7 +28,7 @@ export function parseAllOf(
   refs: Refs,
 ): string {
   if (schema.allOf.length === 0) {
-    return "z.never()";
+    return `{"type": "never"}`;
   } else if (schema.allOf.length === 1) {
     const item = schema.allOf[0];
 
@@ -39,11 +39,11 @@ export function parseAllOf(
   } else {
     const [left, right] = half(ensureOriginalIndex(schema.allOf)) as any;
 
-    return `z.intersection(${parseAllOf({ allOf: left }, refs)}, ${parseAllOf(
+    return `{"type": "intersection", "left": ${parseAllOf({ allOf: left }, refs)}, "right": ${parseAllOf(
       {
         allOf: right,
       },
       refs,
-    )})`;
+    )}}`;
   }
 }

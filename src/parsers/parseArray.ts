@@ -7,29 +7,27 @@ export const parseArray = (
   refs: Refs,
 ) => {
   if (Array.isArray(schema.items)) {
-    return `z.tuple([${schema.items.map((v, i) =>
+    return `{"type": "tuple", "items": [${schema.items.map((v, i) =>
       parseSchema(v, { ...refs, path: [...refs.path, "items", i] }),
-    )}])`;
+    )}]}`;
   }
 
   let r = !schema.items
-    ? "z.array(z.any())"
-    : `z.array(${parseSchema(schema.items, {
+    ? `{"type": "array", "element": {"type": "any"}}`
+    : `{"type": "array", "element": ${parseSchema(schema.items, {
         ...refs,
         path: [...refs.path, "items"],
-      })})`;
-
-  r += withMessage(schema, "minItems", ({ json }) => [
-    `.min(${json}`,
-    ", ",
-    ")",
-  ]);
-
-  r += withMessage(schema, "maxItems", ({ json }) => [
-    `.max(${json}`,
-    ", ",
-    ")",
-  ]);
+      })}${
+        withMessage(schema, "minItems", ({ json }) => [
+          `, "minLength": ${json}`,
+          "",
+        ])
+      }${
+        withMessage(schema, "maxItems", ({ json }) => [
+          `, "maxLength": ${json}`,
+          "",
+        ])
+      }}`;
 
   return r;
 };

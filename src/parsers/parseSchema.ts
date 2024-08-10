@@ -27,7 +27,7 @@ export const parseSchema = (
   refs: Refs = { seen: new Map(), path: [] },
   blockMeta?: boolean,
 ): string => {
-  if (typeof schema !== "object") return schema ? "z.any()" : "z.never()";
+  if (typeof schema !== "object") return schema ? `{"type": "any"}` : `{"type": "never"}`;
 
   if (refs.parserOverride) {
     const custom = refs.parserOverride(schema, refs);
@@ -45,7 +45,7 @@ export const parseSchema = (
     }
 
     if (refs.depth === undefined || seen.n >= refs.depth) {
-      return "z.any()";
+      return `{"type": "any"}`;
     }
 
     seen.n += 1;
@@ -74,7 +74,7 @@ export const parseSchema = (
 
 const addDescribes = (schema: JsonSchemaObject, parsed: string): string => {
   if (schema.description) {
-    parsed += `.describe(${JSON.stringify(schema.description)})`;
+    parsed += `, "description": ${JSON.stringify(schema.description)}}`;
   }
 
   return parsed;
@@ -82,7 +82,7 @@ const addDescribes = (schema: JsonSchemaObject, parsed: string): string => {
 
 const addDefaults = (schema: JsonSchemaObject, parsed: string): string => {
   if (schema.default !== undefined) {
-    parsed += `.default(${JSON.stringify(schema.default)})`;
+    parsed = parsed.slice(0, -1) + `, "defaultValue": ${JSON.stringify(schema.default)}}`;
   }
 
   return parsed;
@@ -90,7 +90,7 @@ const addDefaults = (schema: JsonSchemaObject, parsed: string): string => {
 
 const addAnnotations = (schema: JsonSchemaObject, parsed: string): string => {
   if (schema.readOnly) {
-    parsed += ".readonly()";
+    parsed = parsed.slice(0, -1) + `, "readonly": true}`;
   }
 
   return parsed;

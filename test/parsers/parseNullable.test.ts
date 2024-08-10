@@ -12,7 +12,7 @@ suite("parseNullable", (test) => {
         },
         { path: [], seen: new Map() },
       ),
-      'z.string().nullable().default(null)',
+      `{"type": "string", "isNullable": true, "defaultValue": null}`,
     );
   });
 });

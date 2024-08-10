@@ -24,7 +24,8 @@
     "dry": "npm run build && npm pub --dry-run",
     "dev": "tsx watch test/index.ts",
     "gen": "tsx ./createIndex.ts",
-    "test": "c8 --all tsx test/index.ts"
+    "tsx": "tsx test/index.ts",
+    "test": "c8 --all npm run tsx"
   },
   "c8": {
     "exclude": [
@@ -70,6 +71,7 @@
     "rimraf": "^5.0.5",
     "tsx": "^4.1.1",
     "typescript": "^5.2.2",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "zodex": "^0.18.2"
   }
 }

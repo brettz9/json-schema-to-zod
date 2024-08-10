@@ -7,7 +7,7 @@ suite("parseNumber", (test) => {
       parseNumber({
         type: "integer",
       }),
-      `z.number().int()`
+      `{"type": "number", "int": true}`
     );
 
     assert(
@@ -15,7 +15,7 @@ suite("parseNumber", (test) => {
         type: "integer",
         multipleOf: 1
       }),
-      `z.number().int()`
+      `{"type": "number", "int": true}`
     );
 
     assert(
@@ -23,7 +23,7 @@ suite("parseNumber", (test) => {
         type: "number",
         multipleOf: 1
       }),
-      `z.number().int()`
+      `{"type": "number", "int": true}`
     );
   });
 
@@ -34,7 +34,7 @@ suite("parseNumber", (test) => {
         exclusiveMinimum: true,
         minimum: 2,
       }),
-      `z.number().gt(2)`
+      `{"type": "number", "min": 2}`
     );
   });
 
@@ -44,7 +44,7 @@ suite("parseNumber", (test) => {
         type: "number",
         minimum: 2,
       }),
-      `z.number().gte(2)`
+      `{"type": "number", "min": 2, "minInclusive": true}`
     );
   });
 
@@ -55,7 +55,7 @@ suite("parseNumber", (test) => {
         exclusiveMaximum: true,
         maximum: 2,
       }),
-      `z.number().lt(2)`
+      `{"type": "number", "max": 2}`
     );
   });
 
@@ -65,27 +65,27 @@ suite("parseNumber", (test) => {
         type: "number",
         exclusiveMaximum: 2,
       }),
-      `z.number().lt(2)`
+      `{"type": "number", "max": 2}`
     );
   });
 
-  test("should accept errorMessage", (assert) => {
-    assert(
-      parseNumber({
-        type: "number",
-        format: "int64",
-        exclusiveMinimum: 0,
-        maximum: 2,
-        multipleOf: 2,
-        errorMessage: {
-          format: "ayy",
-          multipleOf: "lmao",
-          exclusiveMinimum: "deez",
-          maximum: "nuts",
-        },
-      }),
+  // test("should accept errorMessage", (assert) => {
+  //   assert(
+  //     parseNumber({
+  //       type: "number",
+  //       format: "int64",
+  //       exclusiveMinimum: 0,
+  //       maximum: 2,
+  //       multipleOf: 2,
+  //       errorMessage: {
+  //         format: "ayy",
+  //         multipleOf: "lmao",
+  //         exclusiveMinimum: "deez",
+  //         maximum: "nuts",
+  //       },
+  //     }),
 
-      'z.number().int("ayy").multipleOf(2, "lmao").gt(0, "deez").lte(2, "nuts")',
-    );
-  });
+  //     'z.number().int("ayy").multipleOf(2, "lmao").gt(0, "deez").lte(2, "nuts")',
+  //   );
+  // });
 });

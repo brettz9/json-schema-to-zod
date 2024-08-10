@@ -9,7 +9,7 @@ suite("parseEnum", (test) => {
           enum: []
         },
       ),
-      "z.never()",
+      `{"type": "never"}`,
     );
   });
 
@@ -20,7 +20,7 @@ suite("parseEnum", (test) => {
           enum: ["someValue"]
         },
       ),
-      `z.literal("someValue")`,
+      `{"type": "literal", "value": "someValue"}`,
     );
   });
 
@@ -31,7 +31,7 @@ suite("parseEnum", (test) => {
           enum: ["someValue", "anotherValue"]
         },
       ),
-      `z.enum(["someValue","anotherValue"])`,
+      `{"type": "enum", "values": ["someValue","anotherValue"]}`,
     );
   });
   test("should create union with mixed enums", (assert) => {
@@ -41,7 +41,7 @@ suite("parseEnum", (test) => {
           enum: ["someValue", 57]
         },
       ),
-      `z.union([z.literal("someValue"), z.literal(57)])`,
+      `{"type": "union", "options": [{"type": "literal", "value": "someValue"}, {"type": "literal", "value": 57}]}`,
     );
   });
 });

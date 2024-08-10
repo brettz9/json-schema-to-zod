@@ -18,7 +18,7 @@ suite("parseArray", (test) => {
         },
         { path: [], seen: new Map() },
       ),
-      "z.tuple([z.string(),z.number()])",
+      `{"type": "tuple", "items": [{"type": "string"},{"type": "number"}]}`,
     );
   });
 
@@ -33,7 +33,7 @@ suite("parseArray", (test) => {
         },
         { path: [], seen: new Map() },
       ),
-      "z.array(z.string())",
+      `{"type": "array", "element": {"type": "string"}}`,
     );
   });
 
@@ -49,7 +49,7 @@ suite("parseArray", (test) => {
         },
         { path: [], seen: new Map() },
       ),
-      "z.array(z.string()).max(2)",
+      `{"type": "array", "element": {"type": "string"}, "maxLength": 2}`
     );
   });
 })

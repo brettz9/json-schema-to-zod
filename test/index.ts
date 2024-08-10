@@ -1,6 +1,6 @@
-import "./jsonSchemaToZod.test.js";
+import "./jsonSchemaToZodex.test.js";
 import "./cli.js";
-import "./eval.test.js";
+import "./dezerialize.test.js";
 import "./parsers/parseAnyOf.test.js";
 import "./parsers/parseAllOf.test.js";
 import "./parsers/parseArray.test.js";

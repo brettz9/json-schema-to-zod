@@ -11,10 +11,15 @@ export function parseObject(
   let properties: string | undefined = undefined;
 
   if (objectSchema.properties) {
-    if (!Object.keys(objectSchema.properties).length) {
-      properties = "z.object({})";
+    if (its.an.anyOf(objectSchema) || its.a.oneOf(objectSchema) || its.an.allOf(objectSchema)) {
+      properties = `{"type": "intersection", "left": `;
     } else {
-      properties = "z.object({ ";
+      properties = "";
+    }
+    if (!Object.keys(objectSchema.properties).length) {
+      properties += `{"type": "object", "properties": {}`;
+    } else {
+      properties += `{"type": "object", "properties": {`;
 
       properties += Object.keys(objectSchema.properties)
         .map((key) => {
@@ -34,11 +39,11 @@ export function parseObject(
 
           const optional = !hasDefault && !required;
 
-          return optional ? `${result}.optional()` : result;
+          return optional ? `${result.slice(0, -1)}, "isOptional": true}` : result;
         })
         .join(", ");
 
-      properties += " })";
+      properties += "}";
     }
   }
 
@@ -69,18 +74,18 @@ export function parseObject(
 
     if (properties) {
       if (additionalProperties) {
-        patternProperties += `.catchall(z.union([${[
+        patternProperties += `, "catchall": {"type": "union", "options": [${[
           ...Object.values(parsedPatternProperties),
           additionalProperties,
-        ].join(", ")}]))`;
+        ].join(", ")}]}`;
       } else if (Object.keys(parsedPatternProperties).length > 1) {
-        patternProperties += `.catchall(z.union([${Object.values(
+        patternProperties += `, "catchall": {"type": "union", "options": [${Object.values(
           parsedPatternProperties,
-        ).join(", ")}]))`;
+        ).join(", ")}]}`;
       } else {
-        patternProperties += `.catchall(${Object.values(
+        patternProperties += `, "catchall": ${Object.values(
           parsedPatternProperties,
-        )})`;
+        )}}`;
       }
     } else {
       if (additionalProperties) {
@@ -166,18 +171,18 @@ export function parseObject(
     ? patternProperties
       ? properties + patternProperties
       : additionalProperties
-        ? additionalProperties === "z.never()"
-          ? properties + ".strict()"
-          : properties + `.catchall(${additionalProperties})`
+        ? additionalProperties === `{"type": "never"}`
+          ? properties + `, "unknownKeys": "strict"`
+          : properties + `, "catchall": ${additionalProperties}`
         : properties
     : patternProperties
       ? patternProperties
       : additionalProperties
-        ? `z.record(${additionalProperties})`
-        : "z.record(z.any())";
+        ? `{"type": "record", "key": {"type": "string"}, "value": ${additionalProperties}`
+        : `{"type": "record", "key": {"type": "string"}, "value": {"type": "any"}`;
 
   if (its.an.anyOf(objectSchema)) {
-    output += `.and(${parseAnyOf(
+    output += `}, "right": ${parseAnyOf(
       {
         ...objectSchema,
         anyOf: objectSchema.anyOf.map((x) =>
@@ -189,11 +194,11 @@ export function parseObject(
         ) as any,
       },
       refs,
-    )})`;
+    )}`;
   }
 
   if (its.a.oneOf(objectSchema)) {
-    output += `.and(${parseOneOf(
+    output += `}, "right": ${parseOneOf(
       {
         ...objectSchema,
         oneOf: objectSchema.oneOf.map((x) =>
@@ -205,11 +210,11 @@ export function parseObject(
         ) as any,
       },
       refs,
-    )})`;
+    )}`;
   }
 
   if (its.an.allOf(objectSchema)) {
-    output += `.and(${parseAllOf(
+    output += `}, "right": ${parseAllOf(
       {
         ...objectSchema,
         allOf: objectSchema.allOf.map((x) =>
@@ -221,8 +226,10 @@ export function parseObject(
         ) as any,
       },
       refs,
-    )})`;
+    )}`;
   }
+
+  output += '}';
 
   return output;
 }

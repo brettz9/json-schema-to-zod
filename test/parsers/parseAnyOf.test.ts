@@ -15,7 +15,7 @@ suite("parseAnyOf", (test) => {
         },
         { path: [], seen: new Map() },
       ),
-      "z.union([z.string(), z.number()])",
+      `{"type": "union", "options": [{"type": "string"}, {"type": "number"}]}`,
     );
   });
 
@@ -25,11 +25,14 @@ suite("parseAnyOf", (test) => {
         { anyOf: [{ type: "string" }] },
         { path: [], seen: new Map() },
       ),
-      "z.string()",
+      `{"type": "string"}`,
     );
   });
 
   test("should return z.any() if array is empty", (assert) => {
-    assert(parseAnyOf({ anyOf: [] }, { path: [], seen: new Map() }), "z.any()");
+    assert(
+      parseAnyOf({ anyOf: [] }, { path: [], seen: new Map() }),
+      `{"type": "any"}`
+    );
   });
 });

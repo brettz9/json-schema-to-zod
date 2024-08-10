@@ -58,7 +58,7 @@ json-refs resolve mySchema.json | json-schema-to-zod | prettier --parser typescr
 #### Simple example
 
 ```typescript
-import { jsonSchemaToZod } from "json-schema-to-zod";
+import { jsonSchemaToZodex } from "json-schema-to-zod";
 
 const myObject = {
   type: "object",
@@ -69,14 +69,14 @@ const myObject = {
   },
 };
 
-const module = jsonSchemaToZod(myObject, { module: "esm" });
+const module = jsonSchemaToZodex(myObject, { module: "esm" });
 
 // `type` can be either a string or - outside of the CLI - a boolean. If its `true`, the name of the type will be the name of the schema with a capitalized first letter.
-const moduleWithType = jsonSchemaToZod(myObject, { name: "mySchema", module: "esm", type: true });
+const moduleWithType = jsonSchemaToZodex(myObject, { name: "mySchema", module: "esm", type: true });
 
-const cjs = jsonSchemaToZod(myObject, { module: "cjs", name: "mySchema" });
+const cjs = jsonSchemaToZodex(myObject, { module: "cjs", name: "mySchema" });
 
-const justTheSchema = jsonSchemaToZod(myObject);
+const justTheSchema = jsonSchemaToZodex(myObject);
 ```
 
 ##### `module`
@@ -116,11 +116,11 @@ z.object({ hello: z.string().optional() });
 import { z } from "zod";
 import { resolveRefs } from "json-refs";
 import { format } from "prettier";
-import jsonSchemaToZod from "json-schema-to-zod";
+import jsonSchemaToZodex from "json-schema-to-zod";
 
 async function example(jsonSchema: Record<string, unknown>): Promise<string>{
   const { resolved } = await resolveRefs(jsonSchema);
-  const code = jsonSchemaToZod(resolved);
+  const code = jsonSchemaToZodex(resolved);
   const formatted = await format(code, { parser: "typescript" });
 
   return formatted;
@@ -130,15 +130,3 @@ async function example(jsonSchema: Record<string, unknown>): Promise<string>{
 #### Overriding a parser
 
 You can pass a function to the `overrideParser` option, which represents a function that receives the current schema node and the reference object, and should return a string when it wants to replace a default output. If the default output should be used for the node just return void.
-
-#### Use at Runtime
-
-The output of this package is not meant to be used at runtime. JSON Schema and Zod does not overlap 100% and the scope of the parsers are purposefully limited in order to help the author avoid a permanent state of chaotic insanity. As this may cause some details of the original schema to be lost in translation, it is instead recommended to use tools such as [Ajv](https://ajv.js.org/) to validate your runtime values directly against the original JSON Schema.
-
-That said, it's possible in most cases to use `eval`. Here's an example that you shouldn't use:
-
-```typescript
-const zodSchema = eval(jsonSchemaToZod({ type: "string" }, { module: "cjs" }));
-
-zodSchema.safeParse("Please just use Ajv instead");
-```

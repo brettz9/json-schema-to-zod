@@ -2,58 +2,57 @@ import { JsonSchemaObject } from "../Types.js";
 import { withMessage } from "../utils/withMessage.js";
 
 export const parseString = (schema: JsonSchemaObject & { type: "string" }) => {
-  let r = "z.string()";
+  let r = `{"type": "string"`;
 
   r += withMessage(schema, "format", ({ value }) => {
     switch (value) {
       case "email":
-        return [".email(", ")"];
+        return [`, "kind": "email"`, ""];
       case "ip":
-        return [".ip(", ")"];
+        return [`, "kind": "ip"`, ""];
       case "ipv4":
-        return ['.ip({ version: "v4"', ", message: ", " })"];
+        return [`, "kind": "ip", "version": "v4"`, ""];
       case "ipv6":
-        return ['.ip({ version: "v6"', ", message: ", " })"];
+        return [`, "kind": "ip", "version": "v6"`, ""];
       case "uri":
-        return [".url(", ")"];
+        return [`, "kind": "url"`, ""];
       case "uuid":
-        return [".uuid(", ")"];
+        return [`, "kind": "uuid"`, ""];
       case "date-time":
-        return [".datetime({ offset: true", ", message: ", " })"];
+        return [`, "kind": "datetime", "offset": true`, ""];
       case "time":
-        return [".time(", ")"];
+        return [`, "kind": "time"`, ""];
       case "date":
-        return [".date(", ")"];
+        return [`, "kind": "date"`, ""];
       case "binary":
-        return [".base64(", ")"];
+        return [`, "kind": "base64"`, ""];
       case "duration":
-        return [".duration(", ")"];
+        return [`, "kind": "duration"`, ""];
     }
   });
 
   r += withMessage(schema, "contentEncoding", ({ value }) => {
     if (value === "base64") {
-      return [".base64(", ")"];
+      return [`, "kind": "base64"`, ""];
     }
   });
 
   r += withMessage(schema, "pattern", ({ json }) => [
-    `.regex(new RegExp(${json})`,
-    ", ",
-    ")",
+    `, "regex": ${json}`,
+    "",
   ]);
 
   r += withMessage(schema, "minLength", ({ json }) => [
-    `.min(${json}`,
-    ", ",
-    ")",
+    `, "min": ${json}`,
+    "",
   ]);
 
   r += withMessage(schema, "maxLength", ({ json }) => [
-    `.max(${json}`,
-    ", ",
-    ")",
+    `, "max": ${json}`,
+    "",
   ]);
+
+  r += '}';
 
   return r;
 };
